@@ -9,20 +9,6 @@
 let s:save_cpo = &cpo
 set cpo&vim
 
-function! s:sql_checker(filetype)
-  if index(['sql', 'pgsql', 'mysql'], a:filetype) != -1
-    return 1
-  endif
-  return 0
-endfunction
-
-function! s:str_delimiter(filetype)
-  if s:sql_checker(a:filetype)
-    return '[PG|MY]*SQL'
-  else
-  return toupper(a:filetype)
-endfunction
-
 function! s:syntax_group(filetype)
   let ft = toupper(a:filetype)
   return 'rubyHereDoc' . ft
@@ -45,8 +31,7 @@ endfunction
 
 function rubyhdoc#enable_highlight(filetype)
   let region_group = s:syntax_group(a:filetype)
-  let str_delim = s:str_delimiter(a:filetype)
-  let regexp = "<<[-~.]*\\z(" . str_delim . "[A-Z_]*\\)"
+  let regexp = "<<[-~.]*\\z(" . toupper(a:filetype) . "[A-Z_]*\\)"
 
   exec 'syntax region ' . region_group .  ' matchgroup=rubyStringDelimiter start=+' . regexp . '+ end=+^\s*\z1+ contains=@' . a:filetype . ',rubyInterpolation'
 endfunction
